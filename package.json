@@ -1,0 +1,24 @@
+{
+  "name": "smart-brain-api",
+  "version": "1.0.0",
+  "description": "API for face recognition app.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "face-recognition",
+    "express.js",
+    "node.js",
+    "javascript"
+  ],
+  "author": "Mustafa",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^1.19.1"
+  },
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1"
+  }
+}
