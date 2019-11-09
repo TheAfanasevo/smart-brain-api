@@ -45,12 +45,6 @@ app.get('/users', (req, res) => {
 });
 
 app.post('/signin', (req, res) => {
-  bycrypt.compare('apples', '$2a$10$qmlFntP.SmBUvflqbTmcHem1bgifXWzAQy6O0ueeIBykXG.qgajji', (err, res) => {
-    console.log('first guess', res);
-  });
-  bycrypt.compare('veggies', '$2a$10$qmlFntP.SmBUvflqbTmcHem1bgifXWzAQy6O0ueeIBykXG.qgajji', (err, res) => {
-    console.log('second guess', res);
-  })
   if (req.body.email === database.users[0].email) {
     res.json('Success!');
   } else {
