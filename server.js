@@ -2,102 +2,33 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const bycrypt = require('bcrypt-nodejs');
 const cors = require('cors');
+const knex = require('knex');
+const { handler: regHandler } = require('./controllers/register');
+const { handler: signInHandler } = require('./controllers/signin');
+const { handler: getProfile } = require('./controllers/getProfile');
+const { handler: putImage, callApi } = require('./controllers/putImage');
 
 const app = express();
 
 app.use(bodyParser.json());
 app.use(cors());
 
-const database = {
-  users: [
-    {
-      id: '123',
-      name: 'John',
-      email: 'john@gmail.com',
-      password: 'cookies',
-      entries: 0,
-      joined: new Date(),
-    },
-    {
-      id: '124',
-      name: 'Sally',
-      email: 'sally@gmail.com',
-      password: 'bananas',
-      entries: 0,
-      joined: new Date(),
-    }
-  ],
-  login: [
-    {
-      id: '987',
-      hash: '',
-      email: 'john@gmail.com'
-    }
-  ]
-}
-
-app.get('/', (req, res) => {
-  res.send('Welldone!');
-});
-
-app.get('/users', (req, res) => {
-  res.json(database.users);
-});
-
-app.post('/signin', (req, res) => {
-  if (req.body.email === database.users[0].email) {
-    res.json('Success!');
-  } else {
-    res.status(400).json('Failed!');
+const db = knex({
+  client: 'pg',
+  connection: {
+    host: '127.0.0.1',
+    user: 'postgres',
+    password: '123456',
+    database: 'smartbrain'
   }
 });
 
-app.post('/register', (req, res) => {
-  const { email, name, password } = req.body;
-  bycrypt.hash(password, null, null, (err, hash) => {
-    console.log(hash);
-  })
-
-  database.users.push({
-    id: '125',
-    email: email,
-    name: name,
-    password: password,
-    entries: 0,
-    joined: new Date()
-  });
-
-  res.json(database.users[database.users.length - 1]);
-});
-
-app.get('/profile/:id', (req, res) => {
-  const { id } = req.params;
-  let found = false;
-  database.users.forEach(user => {
-    if(user.id === id) {
-      found = true;
-      res.json(user);
-    }
-  })
-  if(!found) {
-    res.status(400).json('user not found');
-  }
-});
-
-app.post('/image', (req, res) => {
-  const { id } = req.body;
-  let found = false;
-  database.users.forEach(user => {
-    if(user.id === id) {
-      found = true;
-      user.entries++;
-      res.json(user.entries);
-    }
-  })
-  if(!found) {
-    res.status(400).json('user not found');
-  }
-});
+app.get('/', (req, res) => res.json(database.users));
+app.post('/signin', signInHandler(bycrypt, db));
+app.post('/register', (req, res) => { regHandler(req, res, bycrypt, db) });
+app.get('/profile/:id', (req, res) => { getProfile(req, res, db) });
+app.put('/image', (req, res) => { putImage(req, res, db) });
+app.post('/imageurl', (req, res) => { callApi(req, res) });
 
 app.listen(process.env.PORT || 3030, () => {
   console.log(`Listening on port ${process.env.PORT || 3030}...`);
