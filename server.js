@@ -18,12 +18,11 @@ const db = knex({
   connection: {
     host: '127.0.0.1',
     user: 'postgres',
-    password: '123456',
-    database: 'smartbrain'
+    password: 'desouzaafanasevo',
+    database: 'smartbrainapp'
   }
 });
 
-app.get('/', (req, res) => res.json(database.users));
 app.post('/signin', signInHandler(bycrypt, db));
 app.post('/register', (req, res) => { regHandler(req, res, bycrypt, db) });
 app.get('/profile/:id', (req, res) => { getProfile(req, res, db) });

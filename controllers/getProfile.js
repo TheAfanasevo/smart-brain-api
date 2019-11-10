@@ -1,4 +1,4 @@
-const handler = (req, res) => {
+const handler = (req, res, db) => {
     const { id } = req.params;
     db
         .select('*')

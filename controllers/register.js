@@ -1,12 +1,14 @@
-const handler = (req, res, bycrypt, db) => () => {
+const handler = (req, res, bycrypt, db) => {
+    console.log(module.path,req.body);
     const { email, name, password } = req.body;
     if (!email || !name || !password) {
         return res.status(400).json('incorrect form submission')
     }
     const hash = bycrypt.hashSync(password);
+    console.log(req.body);
 
     db.transaction(trx => {
-        trx.insert({
+        return trx.insert({
             hash,
             email
         })
